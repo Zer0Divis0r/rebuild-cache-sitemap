@@ -40,7 +40,7 @@ if [[ -n "${INPUT_SITEMAP_URL}" ]]; then
   SITEMAP_URLS+=("$INPUT_SITEMAP_URL")
 
 elif [[ -n "${INPUT_ROBOTS_URL_PREFIX}" ]]; then
-  SITEMAP_URLS=($(curl -sf "${INPUT_ROBOTS_URL_PREFIX}/robots.txt" | grep -oP '^Sitemap:\s*\K.*'))
+  SITEMAP_URLS=($(curl -sf "${INPUT_ROBOTS_URL_PREFIX}/robots.txt" | grep -o '^Sitemap:[[:space:]]*.*' | awk '{print $2}'))
   if [ $? -ne 0 ]; then
     echo "robots.txt was not found under ${INPUT_ROBOTS_URL_PREFIX}!"
     exit 1
