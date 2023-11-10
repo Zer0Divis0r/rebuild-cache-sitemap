@@ -68,12 +68,14 @@ else
   RATE=0.25
 fi
 
-SU=("${SITEMAP_URLS[@]}")
-for SITEMAP_FILE in "${SU[@]}"; do
+new_sitemaps=()
+for SITEMAP_FILE in "${SITEMAP_URLS[@]}"; do
   sitemap_content=$(curl -s "$SITEMAP_FILE")
-  more_sitemaps=$(echo "$sitemap_content" | grep -oE "https?://[^[:space:]]+\.xml")
-  SITEMAP_URLS=("${SITEMAP_URLS[@]}" "${more_sitemaps[@]}")
+  more_sitemaps=($(echo "$sitemap_content" | grep -oE "https?://[^[:space:]]+\.xml"))
+
+  new_sitemaps+=("${more_sitemaps[@]}")
 done
+SITEMAP_URLS+=("${new_sitemaps[@]}")
 
 echo Will process sitemaps:
 for url in "${SITEMAP_URLS[@]}"; do

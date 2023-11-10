@@ -12,7 +12,7 @@ You have to provide one of: `sitemap_url` or `robots_domain_prefix`
 Using URL of a root sitemap:
 ```
 name: Rebuild cache
-uses: Zer0Divis0r/rebuild-cache-sitemap@v2
+uses: Zer0Divis0r/rebuild-cache-sitemap@v3
 with:
   sitemap_url: 'https://example.com/sitemap_index.xml'
 ```
@@ -21,7 +21,7 @@ Using address of a site and it's robots.txt file:
 *Note: do not add slash in the end*
 ```
 name: Rebuild cache
-uses: Zer0Divis0r/rebuild-cache-sitemap@v2
+uses: Zer0Divis0r/rebuild-cache-sitemap@v3
 with:
   robots_url_prefix: 'https://example.com'
 ```
