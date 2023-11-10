@@ -23,7 +23,7 @@ Using address of a site and it's robots.txt file:
 name: Rebuild cache
 uses: Zer0Divis0r/rebuild-cache-sitemap@v2
 with:
-  robots_domain_prefix: 'https://example.com'
+  robots_url_prefix: 'https://example.com'
 ```
 
 

@@ -46,7 +46,7 @@ elif [[ -n "${INPUT_ROBOTS_URL_PREFIX}" ]]; then
     exit 1
   fi
 else
-  echo You have to provide at least one of: sitemap_url, robots_domain_prefix
+  echo You have to provide at least one of: sitemap_url, robots_url_prefix
   exit 1
 fi
 
