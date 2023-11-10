@@ -3,7 +3,7 @@
 function process_url {
   url="$1"
 
-  if [[ $url == *sitemaps.org* ]]; then
+  if [[ $url == *sitemaps.org* && $url == *w3.org* && $url == *google.com* ]]; then
     return
   fi
 
@@ -31,9 +31,20 @@ function process_url {
 
 # Check if domain is provided as environment variable
 if [[ -n "${INPUT_SITEMAP_URL}" ]]; then
+
+  curl -sf $INPUT_SITEMAP_URL > /dev/null
+  if [ $? -ne 0 ]; then
+    echo "Root sitemap URL returned HTTP error!"
+    exit 1
+  fi
   SITEMAP_URLS+=("$INPUT_SITEMAP_URL")
+
 elif [[ -n "${INPUT_ROBOTS_URL_PREFIX}" ]]; then
-  SITEMAP_URLS=($(curl -s "${INPUT_ROBOTS_URL_PREFIX}/robots.txt" | grep -oP '^Sitemap:\s*\K.*'))
+  SITEMAP_URLS=($(curl -sf "${INPUT_ROBOTS_URL_PREFIX}/robots.txt" | grep -oP '^Sitemap:\s*\K.*'))
+  if [ $? -ne 0 ]; then
+    echo "robots.txt was not found under ${INPUT_ROBOTS_URL_PREFIX}!"
+    exit 1
+  fi
 else
   echo You have to provide at least one of: sitemap_url, robots_domain_prefix
   exit 1
@@ -57,7 +68,7 @@ else
   RATE=0.25
 fi
 
-SU=$SITEMAP_URLS
+SU=("${SITEMAP_URLS[@]}")
 for SITEMAP_FILE in "${SU[@]}"; do
   sitemap_content=$(curl -s "$SITEMAP_FILE")
   more_sitemaps=$(echo "$sitemap_content" | grep -oE "https?://[^[:space:]]+\.xml")
@@ -78,7 +89,12 @@ TIMEFORMAT="%Es"
 
 for SITEMAP_FILE in "${SITEMAP_URLS[@]}"; do
   echo "Processing URLs in $SITEMAP_FILE..."
-  sitemap_content=$(curl -s $SITEMAP_FILE)
+
+  sitemap_content=$(curl -sf "${SITEMAP_FILE}")
+  if [ $? -ne 0 ]; then
+    echo "Sitemap URL returned HTTP error code!"
+    continue
+  fi
   echo ""
 
   # Extract URLs from the sitemap
