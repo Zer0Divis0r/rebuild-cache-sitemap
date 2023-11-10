@@ -1,0 +1,27 @@
+# action.yml
+name: 'Rebuild Cache'
+description: 'Rebuild CDN cache according to sitemaps files'
+branding:
+  icon: 'refresh-cw'
+  color: 'yellow'
+inputs:
+  robots_url_prefix:
+    description: 'Protocol and domain where to get robots.txt. Eg. https://example.com/'
+    required: false
+  sitemap_url:
+    description: 'URL of root sitemap file'
+    required: false
+  use_wget:
+    description: 'Use Lynx instead of curl (literally opens pages in browser, not just requests addresses)'
+    required: false
+  rate_limitation:
+    description: 'Request rate limitation, requests per second. Default is 4.'
+    required: false
+outputs:
+  urlscount:
+    description: 'The number of URLs requested'
+  sitemapscount:
+    description: 'The number of sitemap files processed'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
