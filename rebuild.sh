@@ -32,7 +32,7 @@ function process_url {
 # Check if domain is provided as environment variable
 if [[ -n "${INPUT_SITEMAP_URL}" ]]; then
 
-  curl -sf $INPUT_SITEMAP_URL > /dev/null
+  curl -sfL $INPUT_SITEMAP_URL > /dev/null
   if [ $? -ne 0 ]; then
     echo "Root sitemap URL returned HTTP error!"
     exit 1
@@ -40,7 +40,7 @@ if [[ -n "${INPUT_SITEMAP_URL}" ]]; then
   SITEMAP_URLS+=("$INPUT_SITEMAP_URL")
 
 elif [[ -n "${INPUT_ROBOTS_URL_PREFIX}" ]]; then
-  SITEMAP_URLS=($(curl -sf "${INPUT_ROBOTS_URL_PREFIX}/robots.txt" | grep -o '^Sitemap:[[:space:]]*.*' | awk '{print $2}'))
+  SITEMAP_URLS=($(curl -sfL "${INPUT_ROBOTS_URL_PREFIX}/robots.txt" | grep -o '^Sitemap:[[:space:]]*.*' | awk '{print $2}'))
   if [ $? -ne 0 ]; then
     echo "robots.txt was not found under ${INPUT_ROBOTS_URL_PREFIX}!"
     exit 1
@@ -53,7 +53,7 @@ fi
 if [[ -n "${INPUT_USE_WGET}" && ( "${INPUT_USE_WGET}" == "1" || "${INPUT_USE_WGET}" == "on" || "${INPUT_USE_WGET}" == "true" || "${INPUT_USE_WGET}" == "TRUE" ) ]]; then
   BROWSER_INIT="wget -recursive --level=1 --page-requisites -e robots=off -q"
 else
-  BROWSER_INIT="curl -s -o /dev/null"
+  BROWSER_INIT="curl -sL -o /dev/null"
 fi
 
 if [[ -n "${INPUT_RATE_LIMITATION}" ]]; then
@@ -70,7 +70,7 @@ fi
 
 new_sitemaps=()
 for SITEMAP_FILE in "${SITEMAP_URLS[@]}"; do
-  sitemap_content=$(curl -s "$SITEMAP_FILE")
+  sitemap_content=$(curl -sL "$SITEMAP_FILE")
   more_sitemaps=($(echo "$sitemap_content" | grep -oE "https?://[^[:space:]]+\.xml"))
 
   new_sitemaps+=("${more_sitemaps[@]}")
@@ -92,7 +92,7 @@ TIMEFORMAT="%Es"
 for SITEMAP_FILE in "${SITEMAP_URLS[@]}"; do
   echo "Processing URLs in $SITEMAP_FILE ..."
 
-  sitemap_content=$(curl -sf "${SITEMAP_FILE}")
+  sitemap_content=$(curl -sfL "${SITEMAP_FILE}")
   if [ $? -ne 0 ]; then
     echo "Sitemap URL returned HTTP error code!"
     continue
