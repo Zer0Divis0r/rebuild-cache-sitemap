@@ -7,7 +7,7 @@ function process_url {
     return
   fi
 
-  echo Grabbing $url...
+  echo Grabbing $url ...
   start_time=$(date +%s.%N)
 
   time $BROWSER_INIT "$url" || echo ""
@@ -90,7 +90,7 @@ urlscount=0
 TIMEFORMAT="%Es"
 
 for SITEMAP_FILE in "${SITEMAP_URLS[@]}"; do
-  echo "Processing URLs in $SITEMAP_FILE..."
+  echo "Processing URLs in $SITEMAP_FILE ..."
 
   sitemap_content=$(curl -sf "${SITEMAP_FILE}")
   if [ $? -ne 0 ]; then
