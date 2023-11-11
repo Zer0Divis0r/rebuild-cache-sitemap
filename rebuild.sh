@@ -3,7 +3,7 @@
 function process_url {
   url="$1"
 
-  if [[ $url == *sitemaps.org* && $url == *w3.org* && $url == *google.com* ]]; then
+  if [[ $url == *sitemaps.org* || $url == *w3.org* || $url == *google.com* ]]; then
     return
   fi
 
@@ -111,6 +111,6 @@ echo "Completed processing sitemaps."
 
 echo "sitemapscount=$sitemapscount" >> "$GITHUB_OUTPUT"
 echo "urlscount=$urlscount" >> "$GITHUB_OUTPUT"
-echo "sitemap_urls=" "${SITEMAP_URLS[@]}" >> "$GITHUB_OUTPUT"
+echo "sitemap_urls=\"${SITEMAP_URLS[@]}\"" >> "$GITHUB_OUTPUT"
 
 echo $GITHUB_OUTPUT
