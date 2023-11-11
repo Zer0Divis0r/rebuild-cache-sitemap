@@ -1,0 +1,17 @@
+name: Run Tests on Pull Request
+
+on:
+  pull_request:
+    types:
+      - opened
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        run: cd tests && ./run_tests.sh

@@ -1,0 +1,16 @@
+name: Manual test
+
+on:
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        run: cd tests && ./run_tests.sh
