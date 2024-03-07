@@ -28,6 +28,16 @@ function process_url {
 
   let "urlscount=urlscount+1"
 }
+get_protocol_and_domain() {
+    local url=$1
+    # Extract protocol
+    local protocol=$(echo "$url" | grep -o '^[^:/]*://')
+    # Remove the protocol part
+    local stripped_url=$(echo "$url" | sed -e 's|^[^/]*//||')
+    # Extract the domain part
+    local domain=$(echo "$stripped_url" | sed -e 's|/.*||')
+    echo "$protocol$domain"
+}
 
 # Check if domain is provided as environment variable
 if [[ -n "${INPUT_SITEMAP_URL}" ]]; then
@@ -39,12 +49,16 @@ if [[ -n "${INPUT_SITEMAP_URL}" ]]; then
   fi
   SITEMAP_URLS+=("$INPUT_SITEMAP_URL")
 
+  homepage_url=$(get_protocol_and_domain "$INPUT_SITEMAP_URL")
+
 elif [[ -n "${INPUT_ROBOTS_URL_PREFIX}" ]]; then
   SITEMAP_URLS=($(curl -sfL "${INPUT_ROBOTS_URL_PREFIX}/robots.txt" | grep -o '^Sitemap:[[:space:]]*.*' | awk '{print $2}'))
   if [ $? -ne 0 ]; then
     echo "robots.txt was not found under ${INPUT_ROBOTS_URL_PREFIX}!"
     exit 1
   fi
+  homepage_url=$INPUT_ROBOTS_URL_PREFIX
+
 else
   echo You have to provide at least one of: sitemap_url, robots_url_prefix
   exit 1
@@ -88,6 +102,8 @@ sitemapscount="${#SITEMAP_URLS[@]}"
 urlscount=0
 
 TIMEFORMAT="%Es"
+
+process_url "$homepage_url"
 
 for SITEMAP_FILE in "${SITEMAP_URLS[@]}"; do
   echo "Processing URLs in $SITEMAP_FILE ..."
